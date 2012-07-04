@@ -1,0 +1,92 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+
+#include "whiteDisplay.hh"
+#include "adaptedPlot.hh"
+
+//Assign print variable a value of 3 to see this output
+
+using namespace std;
+
+#ifndef _WHITESEARCH_HH_
+#define _WHITESEARCH_HH_
+
+void whiteSearch(std::vector<duplex> container, double sampleRate, const char *outputFile, int print){
+	
+	vector<duplex>::iterator it;
+	vector<duplex> availableChannels;
+	double cumPowers = 0.0;
+	double meanPower = 0.0;
+	double cumSTD = 0.0;
+	double stdPower = 0.0;
+	
+	//-----Simple limits for the gathered data-----//
+	
+	if(print == 3) cout << "Finding the mean power" << endl;
+
+	for(it = container.begin(); it != container.end(); it++){
+		cumPowers += (it->power);
+		//cout << "hi" << endl;
+	}
+
+	meanPower = cumPowers / container.size();
+	
+	if(print == 3) cout << "The mean power is: " << meanPower << endl;
+
+	if(print == 3) cout << "Calculating the standard deviation" << endl;
+	
+	for(it = container.begin(); it != container.end(); it++){
+		cumSTD += fabs(meanPower - (it->power));
+	}
+		
+	stdPower = sqrt((1.0/(container.size() - 1)) * cumSTD);
+	
+	if(print == 3) cout << "The STD is: " << stdPower << endl;
+	
+	//-----end-----//
+	
+	//-----Determining which powers are definetely identifyable-----//
+	
+	/*the limits constants allows for moving the limits that define
+	the state of the incomming powers. As these constants get bigger,
+	more tolerance is allowed to their respective orientation.*/
+	
+	float alpha = 0.0; //upperLimit constant
+	float beta = 0.0; //lowerLimit constant
+	float upperLimit = meanPower + (alpha * stdPower);
+	float lowerLimit = meanPower - (beta * stdPower);
+	duplex available;
+	
+	if(print == 3) cout << "mean: " << meanPower<< ", up: " << upperLimit << ", down: " << lowerLimit << endl;
+	
+	for(it = container.begin(); it != container.end(); it++){
+		available.freq = 0.0;
+		available.power = 0.0;
+		
+		if((it->power) >= upperLimit){
+			if(print == 3) cout << "Freq: " << it->freq << " " << it->power << " is greater" << endl;		
+		}
+		if((it->power) <= lowerLimit){
+			if(print == 3) cout << "Freq: " << it->freq << " " << it->power << " is lower" << endl;
+			available.freq = it->freq;
+			available.power = it->power;
+			
+			availableChannels.push_back(available);
+
+		}
+		if(((it->power) > lowerLimit) && ((it->power) < upperLimit)){
+			if(print == 3) cout << "Freq: " << it->freq << " " << it->power << " is undetermined" << endl;		
+		}
+		
+	}
+	
+	if(print == 3) cout << "The mean power is: " << meanPower << endl;
+	
+	whiteDisplay(container, availableChannels, sampleRate, outputFile, print);
+}	
+
+#endif
