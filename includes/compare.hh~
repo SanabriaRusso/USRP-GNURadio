@@ -181,6 +181,7 @@ void compare(std::vector<duplex> allSweep, const char *calculatedWhiteSpaces, do
 	
 	cout << "The number of matches, whether free or used, are: " << freeMatches + usedMatches << " from " << lastChannel - firstChannel << " channels analyzed" << endl;
 	cout << "The number of oscillator-measured free channels were: " << numOfFreeChannels << endl;
+	cout << "The number of USRP-measured free channels were: " << iterator2 << endl;
 	cout << "The number of freeMatches with USRP were: " << freeMatches << endl;
 	cout << "Number of channels USRP-seen free but documented used: " << fP << endl;
 	cout << "Number of channels USRP-seen used but documented free: " << fN << endl;

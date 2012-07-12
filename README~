@@ -1,0 +1,42 @@
+USRP-White-Spaces
+-----------------
+-----------------
+
+Detecting White Spaces from PSD (simple)
+
+What was this code?
+-------------------
+
+order_powers.cpp was first intended as a utility code for ordering power samples taken with a modified version of GNURadio's usrp_spectrum_sense.py. The original implementation swept the spectrum from fmin to fmax at SampleSteps (SS) Hertz a determined number of times (T). If T >= (fmax-fmin)/SS, then the process started again, duplicating the power readings on the output file.
+
+order_powers.cpp simply grabbed the output file and checked if there were repeated frequencies. If affirmative, then the power readings were averaged and saved into another file, with no repeated frequencies and ordered in increasing order.
+
+What is it now?
+---------------
+
+This modified version added a number of functions that aid us in the task of finding TV White Spaces using the embedded USRP-E110. The power readings code from GNURadio was modified so it manages to call this code and perform the analysis just after the gatherings are done. Due to the embedded nature of USRP-E110 an implementation in either C/C++ or Python was preferred.
+
+The inputs of this implementation ./order_powers.cpp , are detailed below:
+
+Power readings file: it is the output of usrp_spectrum_sense.py in the format: \n. Where \n means a break-line.
+
+Output file name: this name is going to be used to output two other files: one of the same name as and other with the appended suffix "_whiteSpaces". The latter contains the available TV White Spaces found at the moment of the power readings and the former just ouputs an ordered file as , but without repeated frequencies (as was mentioned in the previous section).
+
+SampleSteps: in some internal calculations of this code, the SS is needed. This input is allowed in a double procision, i.e.: 1e6. The example indicates a SS of 1 MHz.
+
+Print: values from 1 to 5 are used to ouput and allow the execution of some bits and pieces of code. The default value should be 5.
+
+Compiling
+---------
+
+Just as a simple C/C++ code, the compilation is performed in the following way:
+
+g++ -Wall -w order_powers.cpp -o order_powers
+Other output files
+The execution of this code also outputs a file called "plotChannels.txt". This file contains the channel number and the average power reading of that channel in the following format . This file was first intended to aid us plot a figure like figure1.eps found in this repository.
+
+Currently we are working on an enhanced and more refined implementation of this code, using different methods for detecting TV White Spaces while optimizing its performance.
+
+Updates are always on their way.
+
+L_SR Luis.Sanabria@upf.edu

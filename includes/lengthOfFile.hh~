@@ -9,8 +9,6 @@
 #ifndef _LENGTHOFFILE_HH_
 #define _LENGTHOFFILE_HH_
 
-using namespace std;
-
 int lengthOfFile(ifstream* file){
     
     string line;

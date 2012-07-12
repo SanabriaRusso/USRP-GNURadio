@@ -54,20 +54,20 @@ void adaptedPlot(std::vector<duplex> allSweep, whiteSPC *inputWS, int linesInput
 		}
 	}
 	
-	float empty = 0.0;
+	float full = -65.0;
 	char const *plotFile = "plotChannels.txt";
 	FILE *channelsAndPower;
 	channelsAndPower = fopen(plotFile, "a");
 	
 	for(int l = 0; l <= linesInput; l++){
-		cout << "Channel: " << plotWS[l].channel << " Power: " << plotWS[l].power / plotWS[l].use << " Repetitions: " << plotWS[l].use << endl;
+		// cout << "Channel: " << plotWS[l].channel << " Power: " << plotWS[l].power / plotWS[l].use << " Repetitions: " << plotWS[l].use << endl;
 		if((firstChannel <= plotWS[l].channel) && (plotWS[l].channel <= lastChannel)){
 			if(fabs(plotWS[l].power) > 0){
-				cout << "Channel: " << plotWS[l].channel << endl;
+				//cout << "Channel: " << plotWS[l].channel << endl;
 				fprintf(channelsAndPower, "%d %f\n", plotWS[l].channel, plotWS[l].power / plotWS[l].use);	
 			}
 			else{
-				fprintf(channelsAndPower, "%d %f\n", plotWS[l].channel, empty);	
+				fprintf(channelsAndPower, "%d %f\n", plotWS[l].channel, full);	
 			}
 		}
 	}

@@ -20,7 +20,9 @@ using namespace std;
 //This function just orders the available WS by their TV channel number
 //and ouputs a file in the manner of Albert's file F(TVchannel) = used/available
 
-//Reformulate the problem. You need to get the average of a repeated channel. Find another way. You already did the code, but increased it to desproportionate dimmensions.
+/*Reformulate the problem. You need to get the average of a repeated channel. 
+Find another way. You already did the code, but increased it to desproportionate 
+dimmensions.*/
 
 void adaptedPlot(std::vector<duplex> allSweep, whiteSPC *inputWS, int linesInput, int print){
 	

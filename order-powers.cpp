@@ -69,7 +69,7 @@ int main (int argc, const char * argv[])
         float f;
         float_iss >> f;
         //cout << f << endl;
-        freqContainer[iterator].freq = f;
+        freqContainer[iterator].freq = f + 1e6;
         
         getline(tokenizer, token, ' ');
         istringstream float_iss2(token);

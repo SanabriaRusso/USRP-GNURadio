@@ -49,6 +49,35 @@ void whiteSearch(std::vector<duplex> container, double sampleRate, const char *o
 	
 	//-----end-----//
 	
+	//-----Second option: the midpoint between max and min values-----//
+	
+	float minPower, maxPower;
+	
+	minPower = 0.0;
+	maxPower = -300.0;
+	
+	//Finding the minimum power = noise floor
+	for(it = container.begin(); it != container.end(); it++){
+		if((it->power) < minPower) minPower = it->power;
+		else continue;
+	}
+	
+	//Finding the maximum power = signal ceiling
+	for(it = container.begin(); it != container.end(); it++){
+		if((it->power) > maxPower) maxPower = it->power;
+		else continue;
+	}
+	
+	//Finding the second threshold based on noise floor and signal ceiling
+	
+	float threshold;
+	
+	threshold = minPower + (maxPower - minPower) / 2;
+	
+	if(print == 3) cout << "Noise floor: " << minPower << ", signal ceiling: " << maxPower << ", threshold: " << threshold << endl;
+	
+	
+	
 	
 	
 	
@@ -60,8 +89,15 @@ void whiteSearch(std::vector<duplex> container, double sampleRate, const char *o
 	
 	float alpha = 0.0; //upperLimit constant
 	float beta = 0.0; //lowerLimit constant
+	
+	/*Using the average as threshold
 	float upperLimit = meanPower + (alpha * stdPower);
-	float lowerLimit = meanPower - (beta * stdPower);
+	float lowerLimit = meanPower - (beta * stdPower);*/
+	
+	//Using the midpoint between floor and ceiling as threshold
+	float upperLimit = threshold + (alpha * stdPower);
+	float lowerLimit = threshold - (beta * stdPower);
+	
 	channelPower available;
 	
 	if(print == 3) cout << "mean: " << meanPower<< ", up: " << upperLimit << ", down: " << lowerLimit << endl;
@@ -108,11 +144,8 @@ void whiteSearch(std::vector<duplex> container, double sampleRate, const char *o
 			if(whichChannel(it2->freq) == referenceCh){
 				channelPowers[i].use++;
 				channelPowers[i].power += (it2->power);
-				if(it2->power <= lowerLimit){ 
-					channelPowers[i].license = 0;
-				}
-				else {
-					channelPowers[i].license = 1;
+				if(it2->power >= upperLimit){ 
+					channelPowers[i].license = 1; //only if a reading is higher, then is considered occupied
 				}
 			}
 			else continue;
@@ -130,6 +163,7 @@ void whiteSearch(std::vector<duplex> container, double sampleRate, const char *o
 	//---------------------------------------------------------------------------------//
 	//Determining the state of the channel with averaged power and considering .license//
 	//---------------------------------------------------------------------------------//
+	
 	for(int j = 0; j <= count; j++){
 		if(channelPowers[j].power == 0){ 
 			channelPowers[j].power += upperLimit + 1.0;
@@ -146,7 +180,7 @@ void whiteSearch(std::vector<duplex> container, double sampleRate, const char *o
 			}
 			
 			else{ //in the case of having some narrowband transmission over upperLimit power
-				cout << "Channel: " << channelPowers[j].channel << " may have a narrowband transmission with power over upperLimit" << endl;	
+				if(print == 3) cout << "Channel: " << channelPowers[j].channel << " may have a narrowband transmission with power over upperLimit" << endl;	
 			}
 			
 			
@@ -159,6 +193,17 @@ void whiteSearch(std::vector<duplex> container, double sampleRate, const char *o
 	
 	
 	if(print == 3) cout << "The mean power is: " << meanPower << endl;
+	
+	if(print == 3) cout << "Noise floor: " << minPower << ", signal ceiling: " << maxPower << ", threshold: " << threshold << endl;
+	
+	
+	FILE *channelUsage; //plots channel, power, usage
+	channelUsage = fopen("plotRawData.txt","a");
+	for(int i = 0; i <= count; i++){
+		fprintf(channelUsage, "%d %f %d\n", channelPowers[i].channel, channelPowers[i].power, channelPowers[i].license);	
+	}
+	fclose(channelUsage);
+	
 	
 	whiteDisplay(container, availableChannels, sampleRate, outputFile, print);
 }	
