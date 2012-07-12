@@ -35,6 +35,13 @@ g++ -Wall -w order_powers.cpp -o order_powers
 Other output files
 The execution of this code also outputs a file called "plotChannels.txt". This file contains the channel number and the average power reading of that channel in the following format . This file was first intended to aid us plot a figure like figure1.eps found in this repository.
 
+The Python file
+----------------
+
+The Python file is the one we executed in the USRP. Notice that parameters as the --sub-spec and --antenna may vary from USRP
+to USRP, so run ./uhd_usrp_probe on your USRP to detect this parameters. Then change them into the file, whereas editing of
+passing parameters to the parser at execution.
+
 Currently we are working on an enhanced and more refined implementation of this code, using different methods for detecting TV White Spaces while optimizing its performance.
 
 Updates are always on their way.
